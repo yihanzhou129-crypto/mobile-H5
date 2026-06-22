@@ -207,8 +207,28 @@
     dom.pageHint.classList.remove('visible');
 
     switchPage(dom.transitionPage, dom.scenePage, () => {
-      showEpisode(state.currentScene, state.currentEpisode);
+      // 先显示场景描述，玩家点击翻完后才进入第一个情节
+      showSceneIntro(state.currentScene);
     });
+  }
+
+  // === 场景描述（进入场景后的开场叙述）===
+  function showSceneIntro(sceneIndex) {
+    const scene = SCENES_DATA[sceneIndex];
+    // description 兼容字符串或数组
+    const descLines = Array.isArray(scene.description)
+      ? scene.description
+      : [scene.description];
+
+    state.dialogueMode = 'scene-intro';
+    state.dialoguePages = paginateText(descLines);
+    state.currentPage = 0;
+
+    // 隐藏选项
+    dom.choicesArea.classList.remove('visible', 'five-options');
+    dom.choicesArea.innerHTML = '';
+
+    renderDialoguePage();
   }
 
   // === 显示情节 ===
@@ -312,7 +332,11 @@
     }
 
     // 当前模式的所有分页展示完毕
-    if (state.dialogueMode === 'narration') {
+    if (state.dialogueMode === 'scene-intro') {
+      // 场景描述展示完毕，进入该场景的第一个情节
+      state.dialogueMode = 'narration';
+      setTimeout(() => showEpisode(state.currentScene, 0), 300);
+    } else if (state.dialogueMode === 'narration') {
       // 剧情文字展示完毕，短暂延迟后显示选项
       setTimeout(() => showChoices(), 300);
     } else if (state.dialogueMode === 'feedback') {

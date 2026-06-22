@@ -5,7 +5,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$serverRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$gameRoot = Join-Path $projectRoot 'game'
 
 Write-Host ''
 Write-Host '  ======================================='
@@ -13,7 +14,8 @@ Write-Host '  Local Preview Server (PowerShell)'
 Write-Host '  ======================================='
 Write-Host ('  Home:    http://127.0.0.1:' + $Port + '/')
 Write-Host ('  Nav:     http://127.0.0.1:' + $Port + '/nav')
-Write-Host ('  Root:    ' + $serverRoot)
+Write-Host ('  Static:  ' + $gameRoot)
+Write-Host ('  Root:    ' + $projectRoot)
 Write-Host ('  Port:    ' + $Port)
 Write-Host '  ======================================='
 Write-Host '  Press Ctrl+C to stop'
@@ -34,10 +36,40 @@ try {
     exit 1
 }
 
-# Route aliases
+# 精确路由别名：URL → 物理文件绝对路径
 $routeAliases = @{
-    '/'     = '\game\index.html'
-    '/nav'  = '\zeen-tools\nav.html'
+    '/'       = (Join-Path $gameRoot 'index.html')
+    '/game'   = (Join-Path $gameRoot 'index.html')
+    '/game/'  = (Join-Path $gameRoot 'index.html')
+    '/nav'    = (Join-Path $projectRoot 'zeen-tools\nav.html')
+}
+
+# 挂载前缀：URL → 物理目录（供游戏内 ../素材 引用解析）
+$mountPrefixes = @(
+    @{ url = '/zeen-tools/';                       dir = (Join-Path $projectRoot 'zeen-tools') },
+    @{ url = '/首页及过场页面等素材/';              dir = (Join-Path $projectRoot '首页及过场页面等素材') },
+    @{ url = '/场景图/';                            dir = (Join-Path $projectRoot '场景图') },
+    @{ url = '/人格卡牌图/';                        dir = (Join-Path $projectRoot '人格卡牌图') }
+)
+
+function Resolve-FilePath {
+    param([string]$RequestPath)
+    $decoded = $RequestPath
+    try { $decoded = [System.Web.HttpUtility]::UrlDecode($RequestPath) } catch {}
+
+    # 精确别名（直接返回绝对路径）
+    if ($routeAliases.ContainsKey($decoded)) {
+        return $routeAliases[$decoded]
+    }
+    # 挂载前缀
+    foreach ($m in $mountPrefixes) {
+        if ($decoded.StartsWith($m.url)) {
+            $rest = $decoded.Substring($m.url.Length)
+            return (Join-Path $m.dir $rest)
+        }
+    }
+    # 默认相对 game 根
+    return (Join-Path $gameRoot $decoded.TrimStart('/'))
 }
 
 try {
@@ -47,23 +79,14 @@ try {
         $response = $context.Response
 
         try {
-            $urlPath = [System.Web.HttpUtility]::UrlDecode($request.Url.LocalPath)
+            $filePath = Resolve-FilePath $request.Url.LocalPath
 
-            # Route alias matching
-            if ($routeAliases.ContainsKey($urlPath)) {
-                $urlPath = $routeAliases[$urlPath].Replace('/', '\')
-            } else {
-                $urlPath = $urlPath.TrimStart('/').Replace('/', '\')
-            }
-
-            $filePath = Join-Path $serverRoot $urlPath
-
-            # Directory request fallback to index.html
-            if ((Test-Path $filePath -PathType Container)) {
+            # 目录请求回退到 index.html
+            if ($filePath -and (Test-Path $filePath -PathType Container)) {
                 $filePath = Join-Path $filePath 'index.html'
             }
 
-            if (Test-Path $filePath -PathType Leaf) {
+            if ($filePath -and (Test-Path $filePath -PathType Leaf)) {
                 $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
                 $contentType = switch ($ext) {
                     '.html' { 'text/html; charset=utf-8' }

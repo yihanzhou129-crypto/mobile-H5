@@ -211,41 +211,42 @@ html, body {
 }
 
 /* === 对话框区域 - 下半部分 === */
+/* 容器悬浮，与屏幕底部保持适当间距（露出场景图底部）*/
 .dialogue-area {
   position: absolute;
-  bottom: 0;
+  bottom: 5vh;
   left: 0;
   width: 100%;
-  height: 48%;
+  /* 高度严格等于对话框图按宽度等比缩放后的高度（1179x652）*/
+  height: calc(100vw * 652 / 1179);
   z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
 
-/* 对话框背景图 */
+/* 对话框背景图：等比缩放，宽度铺满，保持原始比例不扭曲 */
 .dialogue-bg {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: bottom;
-  opacity: 0.9;
+  opacity: 0.92;
   z-index: 0;
 }
 
-/* 对话框文字内容区 */
+/* 对话框文字内容区：垂直居中 */
 .dialogue-content {
   position: relative;
   z-index: 1;
-  padding: 30px 28px 40px 28px;
-  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  padding: 20px 28px 24px 28px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   overflow: hidden;
   transition: opacity 0.2s ease;
 }
@@ -510,10 +511,11 @@ html, body {
   justify-content: center;
   color: #F5E6D3;
   font-size: 15px;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 #loading-overlay.hidden {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 .loading-spinner {
