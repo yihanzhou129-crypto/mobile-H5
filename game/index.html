@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>如何成为一个优雅的中世纪人</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+</head>
+<body>
+
+  <!-- 加载遮罩 -->
+  <div id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div>正在准备您的中世纪之旅…</div>
+  </div>
+
+  <!-- 横屏提示 -->
+  <div id="landscape-overlay">
+    <div class="rotate-icon">📱</div>
+    <div>请旋转设备至竖屏模式</div>
+    <div style="font-size:13px;margin-top:8px;opacity:0.7;">本游戏仅支持竖屏游玩</div>
+  </div>
+
+  <!-- 游戏容器 -->
+  <div id="game-container">
+
+    <!-- 首页 -->
+    <div id="home-page" class="page">
+      <img id="home-bg" class="fullscreen-bg" src="" alt="" />
+      <div class="home-hint">点击屏幕进入……</div>
+    </div>
+
+    <!-- 章节过场页 -->
+    <div id="chapter-page" class="page">
+      <img id="chapter-bg" class="fullscreen-bg" src="" alt="" />
+    </div>
+
+    <!-- 场景过渡页 -->
+    <div id="transition-page" class="page">
+      <img id="transition-bg" class="fullscreen-bg" src="" alt="" />
+      <div class="transition-hint">点击屏幕进入</div>
+    </div>
+
+    <!-- 场景页 -->
+    <div id="scene-page" class="page">
+      <!-- 场景背景图 -->
+      <img id="scene-bg" class="scene-bg" src="" alt="" />
+
+      <!-- 选项区域（上半部分） -->
+      <div id="choices-area" class="choices-area"></div>
+
+      <!-- 对话框区域（下半部分） -->
+      <div id="dialogue-area" class="dialogue-area">
+        <img id="dialogue-bg" class="dialogue-bg" src="" alt="" />
+        <div id="dialogue-content" class="dialogue-content"></div>
+        <div id="page-hint" class="page-hint">
+          点击继续<span class="arrow">↓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 结果页 -->
+    <div id="result-page" class="page">
+      <div id="result-container" class="result-container"></div>
+    </div>
+
+    <!-- 尾页 -->
+    <div id="ending-page" class="page">
+      <img class="fullscreen-bg" src="../首页及过场页面等素材/尾页忠告.jpg" alt="" />
+      <div class="ending-hint">点击屏幕任意位置返回首页</div>
+    </div>
+
+  </div>
+
+  <!-- 海报生成隐藏区域 -->
+  <div id="poster-canvas"></div>
+
+  <!-- 海报预览遮罩 -->
+  <div id="poster-overlay">
+    <img id="poster-image" src="" alt="分享海报" />
+    <div class="poster-tip">长按图片可保存至相册</div>
+    <button class="poster-close">关闭</button>
+  </div>
+
+  <!-- 数据文件 -->
+  <script src="js/scenes.js"></script>
+  <script src="js/personalities.js"></script>
+  <!-- 游戏逻辑 -->
+  <script src="js/game.js"></script>
+
+</body>
+</html>

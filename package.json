@@ -1,0 +1,9 @@
+{
+  "name": "medieval-elegance-h5",
+  "version": "1.0.0",
+  "private": true,
+  "description": "《如何成为一个优雅的中世纪人》H5小游戏 - 中世纪人格优雅值鉴定",
+  "scripts": {
+    "preview:local": "node local-preview-server.js"
+  }
+}

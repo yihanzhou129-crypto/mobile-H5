@@ -1,0 +1,8 @@
+node_modules/
+_zeen-tools-temp/
+server.ps1
+*.log
+.DS_Store
+Thumbs.db
+# Test screenshots (root level only)
+/*.png

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>页面导航 - 如何成为一个优雅的中世纪人</title>
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --card-bg: #ffffff;
+    --border: #e0d5c5;
+    --text: #2C1810;
+    --text-secondary: #8B7355;
+    --primary: #C9A227;
+    --primary-dark: #8B6914;
+    --accent: #8B1A1A;
+    --tag-bg: #f8f0e0;
+    --hover-shadow: 0 4px 16px rgba(139,115,85,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-left: 4px solid var(--primary);
+  }
+  .header h1 { font-size: 20px; font-weight: 600; color: var(--text); }
+  .header .info { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .mode-switcher { display: flex; align-items: center; gap: 8px; }
+  .mode-switcher label { font-size: 13px; color: var(--text-secondary); }
+  .mode-btn {
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .mode-btn:hover:not(.active) {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .section { margin-bottom: 24px; }
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 8px 0;
+    border-bottom: 2px solid var(--primary);
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card:hover {
+    box-shadow: var(--hover-shadow);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .card-primary {
+    background: linear-gradient(135deg, #fff8e8, #fff);
+    border-color: var(--primary);
+  }
+  .card-title { font-size: 14px; font-weight: 500; }
+  .card-url { font-size: 11px; color: var(--text-secondary); word-break: break-all; }
+  .card-tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    width: fit-content;
+  }
+  .game-embed {
+    display: none;
+    margin-top: 20px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .game-embed iframe {
+    width: 375px;
+    height: 812px;
+    border: none;
+    display: block;
+    margin: 0 auto;
+  }
+  .game-toolbar {
+    background: #1a1a1a;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #aaa;
+    font-size: 12px;
+  }
+  .game-toolbar button {
+    padding: 4px 12px;
+    border: 1px solid #555;
+    background: transparent;
+    color: #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .footer {
+    margin-top: 32px;
+    padding: 16px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>📋 如何成为一个优雅的中世纪人 - 页面导航</h1>
+    <div class="info">预览服务：http://127.0.0.1:8091 ｜ H5 中世纪人格鉴定小游戏</div>
+  </div>
+  <div class="mode-switcher">
+    <label>预览模式：</label>
+    <button class="mode-btn active" data-mode="normal" onclick="switchMode('normal')">新标签页</button>
+    <button class="mode-btn" data-mode="mobile" onclick="switchMode('mobile')">📱 手机</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🎮 游戏入口</div>
+  <div class="cards">
+    <a class="card card-primary" href="/">
+      <span class="card-tag">入口</span>
+      <div class="card-title">游戏首页（首页.jpg 全屏背景）</div>
+      <div class="card-url">/ → /game/index.html</div>
+    </a>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🎨 场景图预览</div>
+  <div class="cards">
+    <a class="card" href="/场景图/就餐.jpg" target="_blank">
+      <span class="card-tag">场景一</span>
+      <div class="card-title">城堡宴会厅 · 就餐之礼</div>
+      <div class="card-url">/场景图/就餐.jpg</div>
+    </a>
+    <a class="card" href="/场景图/求爱.jpg" target="_blank">
+      <span class="card-tag">场景二</span>
+      <div class="card-title">月光花园 · 求爱之仪</div>
+      <div class="card-url">/场景图/求爱.jpg</div>
+    </a>
+    <a class="card" href="/场景图/作战.png" target="_blank">
+      <span class="card-tag">场景三</span>
+      <div class="card-title">比武训练场 · 作战之艺</div>
+      <div class="card-url">/场景图/作战.png</div>
+    </a>
+    <a class="card" href="/场景图/持家.jpg" target="_blank">
+      <span class="card-tag">场景四</span>
+      <div class="card-title">庄园庭院 · 持家之道</div>
+      <div class="card-url">/场景图/持家.jpg</div>
+    </a>
+    <a class="card" href="/场景图/治国.jpg" target="_blank">
+      <span class="card-tag">场景五</span>
+      <div class="card-title">王座大厅 · 治国之术</div>
+      <div class="card-url">/场景图/治国.jpg</div>
+    </a>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">🃏 人格卡牌</div>
+  <div class="cards">
+    <a class="card" href="/人格卡牌图/宫廷贵族.jpg" target="_blank">
+      <span class="card-tag">92-100</span>
+      <div class="card-title">宫廷贵族</div>
+      <div class="card-url">权谋、精致、野心、掌控</div>
+    </a>
+    <a class="card" href="/人格卡牌图/荣耀骑士.jpg" target="_blank">
+      <span class="card-tag">84-91</span>
+      <div class="card-title">荣耀骑士</div>
+      <div class="card-url">正义、勇敢、自律、忠诚</div>
+    </a>
+    <a class="card" href="/人格卡牌图/智慧贤者.jpg" target="_blank">
+      <span class="card-tag">76-83</span>
+      <div class="card-title">智慧贤者</div>
+      <div class="card-url">博学、理性、内敛、远见</div>
+    </a>
+    <a class="card" href="/人格卡牌图/隐修修士.jpg" target="_blank">
+      <span class="card-tag">68-75</span>
+      <div class="card-title">隐修修士</div>
+      <div class="card-url">虔诚、耐心、奉献、平和</div>
+    </a>
+    <a class="card" href="/人格卡牌图/吟游诗人.jpg" target="_blank">
+      <span class="card-tag">60-67</span>
+      <div class="card-title">吟游诗人</div>
+      <div class="card-url">浪漫、自由、感性、创意</div>
+    </a>
+    <a class="card" href="/人格卡牌图/草药女巫.jpg" target="_blank">
+      <span class="card-tag">52-59</span>
+      <div class="card-title">草药女巫</div>
+      <div class="card-url">温柔、直觉、治愈、神秘</div>
+    </a>
+    <a class="card" href="/人格卡牌图/丝绸商贾.jpg" target="_blank">
+      <span class="card-tag">44-51</span>
+      <div class="card-title">丝绸商贾</div>
+      <div class="card-url">精明、冒险、魅力、务实</div>
+    </a>
+    <a class="card" href="/人格卡牌图/炼金术士.jpg" target="_blank">
+      <span class="card-tag">36-43</span>
+      <div class="card-title">炼金术士</div>
+      <div class="card-url">好奇、神秘、专注、叛逆</div>
+    </a>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">📖 过场与首页素材</div>
+  <div class="cards">
+    <a class="card" href="/首页及过场页面等素材/首页.jpg" target="_blank">
+      <span class="card-tag">首页</span>
+      <div class="card-title">游戏首页背景</div>
+      <div class="card-url">/首页及过场页面等素材/首页.jpg</div>
+    </a>
+    <a class="card" href="/首页及过场页面等素材/第一章.jpg" target="_blank">
+      <span class="card-tag">过场</span>
+      <div class="card-title">第一章 就餐之礼</div>
+      <div class="card-url">/首页及过场页面等素材/第一章.jpg</div>
+    </a>
+    <a class="card" href="/首页及过场页面等素材/第二章.jpg" target="_blank">
+      <span class="card-tag">过场</span>
+      <div class="card-title">第二章 求爱之仪</div>
+      <div class="card-url">/首页及过场页面等素材/第二章.jpg</div>
+    </a>
+    <a class="card" href="/首页及过场页面等素材/第三章.jpg" target="_blank">
+      <span class="card-tag">过场</span>
+      <div class="card-title">第三章 作战之艺</div>
+      <div class="card-url">/首页及过场页面等素材/第三章.jpg</div>
+    </a>
+    <a class="card" href="/首页及过场页面等素材/第四章.jpg" target="_blank">
+      <span class="card-tag">过场</span>
+      <div class="card-title">第四章 持家之道</div>
+      <div class="card-url">/首页及过场页面等素材/第四章.jpg</div>
+    </a>
+    <a class="card" href="/首页及过场页面等素材/第五章.jpg" target="_blank">
+      <span class="card-tag">过场</span>
+      <div class="card-title">第五章 治国之术</div>
+      <div class="card-url">/首页及过场页面等素材/第五章.jpg</div>
+    </a>
+    <a class="card" href="/首页及过场页面等素材/尾页忠告.jpg" target="_blank">
+      <span class="card-tag">尾页</span>
+      <div class="card-title">尾页忠告</div>
+      <div class="card-url">/首页及过场页面等素材/尾页忠告.jpg</div>
+    </a>
+    <a class="card" href="/参考图/选择参考画面.jpg" target="_blank">
+      <span class="card-tag">参考</span>
+      <div class="card-title">选择参考画面</div>
+      <div class="card-url">/参考图/选择参考画面.jpg</div>
+    </a>
+    <a class="card" href="/参考图/剧情参考画面.jpg" target="_blank">
+      <span class="card-tag">参考</span>
+      <div class="card-title">剧情参考画面</div>
+      <div class="card-url">/参考图/剧情参考画面.jpg</div>
+    </a>
+  </div>
+</div>
+
+<!-- 手机预览内嵌区域 -->
+<div class="game-embed" id="game-embed">
+  <div class="game-toolbar">
+    <span>📱 Mobile Preview (375×812)</span>
+    <div>
+      <button onclick="refreshEmbed()">刷新</button>
+      <button onclick="closeEmbed()">关闭</button>
+    </div>
+  </div>
+  <iframe id="game-iframe" src="about:blank"></iframe>
+</div>
+
+<div class="footer">
+  由 zeen-tools 生成 ｜ 点击卡片打开页面 ｜ 手机模式会在下方内嵌预览
+</div>
+
+<script>
+var currentMode = 'normal';
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+  });
+  if (mode === 'normal') {
+    closeEmbed();
+  }
+}
+
+document.querySelectorAll('.card').forEach(function(card) {
+  card.addEventListener('click', function(e) {
+    var href = card.getAttribute('href');
+    if (!href) return;
+
+    if (currentMode === 'mobile' && href !== '#' && href.indexOf('.jpg') === -1 && href.indexOf('.png') === -1) {
+      e.preventDefault();
+      openMobilePreview(href);
+    }
+    // For image links or normal mode, let default behavior (new tab) work
+  });
+});
+
+function openMobilePreview(url) {
+  var embed = document.getElementById('game-embed');
+  var iframe = document.getElementById('game-iframe');
+  iframe.src = url;
+  embed.style.display = 'block';
+  embed.scrollIntoView({ behavior: 'smooth' });
+}
+
+function refreshEmbed() {
+  var iframe = document.getElementById('game-iframe');
+  iframe.src = iframe.src;
+}
+
+function closeEmbed() {
+  var embed = document.getElementById('game-embed');
+  var iframe = document.getElementById('game-iframe');
+  embed.style.display = 'none';
+  iframe.src = 'about:blank';
+}
+</script>
+
+</body>
+</html>
