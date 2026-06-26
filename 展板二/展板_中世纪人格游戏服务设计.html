@@ -35,26 +35,30 @@ body{background:#d8d4cf;display:flex;justify-content:center;align-items:flex-sta
   #board{box-shadow:none;width:297mm;height:420mm;}
 }
 
-/* ===== 全局背景纹理 ===== */
-#board::before{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+/* ===== 全局背景纹理（真实DOM元素，便于 html2canvas 正确渲染层叠，与 index 一致） ===== */
+/* 保留 index 原有的层次光晕；很淡的 radial 透明渐变，不在顶部密集，html2canvas 影响轻微 */
+.bg-texture{position:absolute;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse 60% 30% at 15% 8%,rgba(155,142,199,0.08),transparent),
-    radial-gradient(ellipse 50% 25% at 85% 92%,rgba(201,169,166,0.06),transparent),
-    radial-gradient(ellipse 40% 20% at 50% 50%,rgba(232,224,240,0.05),transparent);
+    radial-gradient(ellipse 60% 30% at 15% 8%,rgba(155,142,199,0.06),transparent),
+    radial-gradient(ellipse 50% 25% at 85% 92%,rgba(201,169,166,0.05),transparent),
+    radial-gradient(ellipse 40% 20% at 50% 50%,rgba(232,224,240,0.04),transparent);
 }
-#board>*{position:relative;z-index:1;}
+#board>*:not(.bg-texture){position:relative;z-index:1;}
 
 /* ===== 内边距容器 ===== */
 /* 左右留白加大，避免内容贴边（A3 展板常规留白 32mm，肉眼明显） */
 .inner{padding:0 32mm;}
 
 /* ===== 穆夏顶部装饰 ===== */
+/* 顶部/底部装饰条：不透明纯白底 + 极淡渐变（0.5→0.12），消除 html2canvas 半透明叠加导致的导出发灰，index/导出一致 */
+/* 顶部/底部装饰条：底色与正文 #FAF8F5 统一，渐变改用预计算的不透明等效纯色
+   （原 rgba(232,224,240,0.5) 叠在 #FAF8F5 上 ≈ #F1ECF2）。
+   这样浏览器与 html2canvas 看到的是同一组确定颜色，不再因 alpha 合成差异而导出发灰，且无割裂感 */
 .mucha-top{width:100%;padding:4mm 0 1.5mm;text-align:center;position:relative;
-  background:linear-gradient(180deg,rgba(232,224,240,0.5) 0%,transparent 100%);}
+  background:linear-gradient(180deg,#F1ECF2 0%,#FAF8F5 100%);background-color:#FAF8F5;}
 .mucha-top svg{display:block;margin:0 auto;}
 .mucha-bottom{width:100%;padding:1.5mm 0 3mm;text-align:center;
-  background:linear-gradient(0deg,rgba(232,224,240,0.4) 0%,transparent 100%);}
+  background:linear-gradient(0deg,#F1ECF2 0%,#FAF8F5 100%);background-color:#FAF8F5;}
 
 /* ===== 标题 ===== */
 .title-area{text-align:center;padding:0 0 2mm;}
@@ -167,6 +171,9 @@ h1 em{font-style:normal;color:var(--pm);}
 <body>
 <button id="dl-btn" onclick="dlBoard()">⬇ 下载展板 PNG</button>
 <div id="board">
+<!-- 全局背景纹理 -->
+<div class="bg-texture"></div>
+
 
 <!-- 角落穆夏装饰 -->
 <svg class="corner tl" viewBox="0 0 120 120"><path d="M5,5 C5,40 15,60 35,80 C20,55 22,35 30,22 C40,12 60,8 80,5 C55,5 30,8 5,5Z" fill="#8B7AA8"/><ellipse cx="22" cy="22" rx="8" ry="8" fill="none" stroke="#C9B896" stroke-width="1.2"/><path d="M10,50 C16,42 14,32 10,24" fill="none" stroke="#C9B896" stroke-width="0.8"/><path d="M50,10 C42,16 32,14 24,10" fill="none" stroke="#C9B896" stroke-width="0.8"/><circle cx="38" cy="12" r="2.5" fill="none" stroke="#C9B896" stroke-width="0.6"/><circle cx="12" cy="38" r="2.5" fill="none" stroke="#C9B896" stroke-width="0.6"/><path d="M8,65 Q18,58 16,45" fill="none" stroke="#D4A5A5" stroke-width="0.5"/><path d="M65,8 Q58,18 45,16" fill="none" stroke="#D4A5A5" stroke-width="0.5"/></svg>
@@ -435,14 +442,19 @@ async function dlBoard(){
   // ② 渲染参数：克隆文档保持与屏幕完全相同的尺寸/布局，仅用 scale 放大像素
   //    不使用 transform:scale + 改宽高的叠加方式（会导致克隆布局与屏幕不一致 → 换行错位）
   const renderOpts={
-    backgroundColor:'#FAF8F5',
+    backgroundColor:null,             // 用 null：避免容器外再铺底色与半透明渐变叠加发灰；board 自身已有不透明背景
     width:w,height:h,                 // 源区域 = 真实布局尺寸
     windowWidth:w,windowHeight:h,     // 克隆文档视口同尺寸，保证 mm/px 换算一致
     scale:sc,                          // 仅靠 scale 放大到 A3@300dpi
     useCORS:false,                     // 图片均为内嵌 base64，无需跨域
     allowTaint:true,
     imageTimeout:0,
-    logging:false
+    logging:false,
+    onclone:function(doc){
+      // 显式确保 board 克隆体不透明底色（与 index 一致，杜绝半透明叠加发灰）
+      const b=doc.getElementById("board");
+      if(b){b.style.backgroundColor="#FAF8F5";}
+    }
   };
 
   try{
