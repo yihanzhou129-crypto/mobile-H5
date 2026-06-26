@@ -1,4 +1,4 @@
-# Local preview server (PowerShell fallback)
+﻿# Local preview server (PowerShell fallback)
 # Auto-invoked by startup bat when Node.js is not installed
 param(
     [int]$Port = 8091
